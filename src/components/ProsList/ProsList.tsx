@@ -1,4 +1,5 @@
-import {ChangeEvent, useCallback, useState} from "react";
+import { useCallback, useState } from "react";
+import {ContentEditableEvent} from "react-contenteditable";
 import Box from "@mui/material/Box";
 import ThumbUp from "@mui/icons-material/ThumbUp";
 import {styled} from "@mui/material/styles";
@@ -41,7 +42,7 @@ const ProsList = () => {
     }
   });
 
-  const onChange = useCallback((event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: number) => {
+  const onChange = useCallback((event: ContentEditableEvent, id: number) => {
     const prosKeys = Object.keys(prosList);
     const isLast = prosKeys.length === id;
 
