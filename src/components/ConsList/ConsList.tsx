@@ -35,15 +35,15 @@ const ListWrapper = styled(Box)({
 
 const ConsList = () => {
   const [consList, setConsList] = useState<Cons>({
-    0: {
-      id: 0,
+    1: {
+      id: 1,
       content: '',
     }
   });
 
   const onChange = useCallback((event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: number) => {
     const prosKeys = Object.keys(consList);
-    const isLast = prosKeys.length - 1 === id;
+    const isLast = prosKeys.length === id;
 
     if (!isLast && !event.target.value) {
       const filteredList = removeLastProperty(consList);

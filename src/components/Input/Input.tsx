@@ -1,6 +1,8 @@
 import {ChangeEvent, FC, memo} from "react";
 import TextField from "@mui/material/TextField";
 import {styled} from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 type InputProps = {
   id: number;
@@ -29,13 +31,18 @@ const Input: FC<InputProps> = ({
   content,
   onChange,
 }) => (
-  <CustomInput
-    key={id}
-    value={content}
-    onChange={(event) => onChange(event, id)}
-    variant="outlined"
-    size="small"
-  />
+  <Box display="flex" gap={1}>
+    <Typography color="#fff">
+      {id}
+    </Typography>
+    <CustomInput
+      key={id}
+      value={content}
+      onChange={(event) => onChange(event, id)}
+      variant="outlined"
+      size="small"
+    />
+  </Box>
 );
 
 export default memo(Input);
