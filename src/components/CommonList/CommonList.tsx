@@ -1,16 +1,28 @@
-import {FC, useCallback} from "react";
-import {ContentEditableEvent} from "react-contenteditable";
+import React, {ChangeEvent, FC, useCallback, useMemo} from "react";
 import {styled} from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import ThumbUp from "@mui/icons-material/ThumbUp";
 import ThumbDown from "@mui/icons-material/ThumbDown";
-import Title from "../Title";
-import Input from "../Input";
+import Typography from "@mui/material/Typography";
+import ListBox from "../ListBox";
 
+type TitleProps = {
+  type: 'pros' | 'cons',
+};
 
-const TitleWrapper = styled(Box)({
+const TitleWrapper = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'type',
+})<TitleProps>(({ type }) => ({
+  backgroundColor: type === 'pros' ? '#4ce312' : '#ff0000',
+  padding: '10px',
+  borderRadius: '14px',
+  color: '#fff',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
   marginBottom: '8px',
-});
+}));
+
 
 const ListWrapper = styled(Box)({
   '&::-webkit-scrollbar': {
@@ -41,7 +53,7 @@ type CommonListProps = {
 };
 
 const CommonList: FC<CommonListProps> = ({ title, type, list, onChangeList }) => {
-  const onChange = useCallback((event: ContentEditableEvent, id: number) => {
+  const onChange = useCallback((event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, id: number) => {
     const isLast = list[list.length - 1].id === id;
 
     if (!isLast && !event.target.value) {
@@ -71,7 +83,9 @@ const CommonList: FC<CommonListProps> = ({ title, type, list, onChangeList }) =>
 
     onChangeList(updatedList);
   }, [list, onChangeList]);
-  
+
+  const TitleIcon = useMemo(() => type === 'pros' ? ThumbUp : ThumbDown, [type]);
+
   return (
     <Box
       display="flex"
@@ -79,10 +93,16 @@ const CommonList: FC<CommonListProps> = ({ title, type, list, onChangeList }) =>
       flex={1}
       maxWidth={200}
     >
-      <TitleWrapper>
-        <Title Icon={type === 'pros' ? ThumbUp : ThumbDown} type={type}>
+      <TitleWrapper type={type}>
+        <TitleIcon
+          sx={{
+            width: 36,
+            height: 36,
+          }}
+        />
+        <Typography variant="h6">
           {title}
-        </Title>
+        </Typography>
       </TitleWrapper>
       <ListWrapper
         display="flex"
@@ -92,7 +112,7 @@ const CommonList: FC<CommonListProps> = ({ title, type, list, onChangeList }) =>
       >
         {
           list.map(({ id, content }, index) =>(
-            <Input
+            <ListBox
               key={id}
               id={id}
               orderNumber={index + 1}
