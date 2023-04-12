@@ -7,12 +7,14 @@ type InputProps = {
   id: number;
   content: string;
   onChange: (event: ContentEditableEvent, id: number) => void;
+  orderNumber: number;
 };
 
 const Input: FC<InputProps> = ({
   id,
   content,
   onChange,
+  orderNumber,
 }) => {
   const [isFocused, setIsFocused] = useState(true);
 
@@ -27,7 +29,7 @@ const Input: FC<InputProps> = ({
   return (
     <Box display="flex" gap={1}>
       <Typography color="#fff">
-        {id}
+        {orderNumber}
       </Typography>
       <ContentEditable
         html={content}

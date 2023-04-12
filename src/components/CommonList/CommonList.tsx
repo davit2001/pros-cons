@@ -1,18 +1,12 @@
-import { useCallback, useState } from "react";
+import {FC, useCallback} from "react";
 import {ContentEditableEvent} from "react-contenteditable";
+import {styled} from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import ThumbUp from "@mui/icons-material/ThumbUp";
-import {styled} from "@mui/material/styles";
+import ThumbDown from "@mui/icons-material/ThumbDown";
 import Title from "../Title";
-import {isObjectEmpty, removeLastProperty} from "../../object.utils";
 import Input from "../Input";
 
-type Pros = {
-  [key: string]: {
-    id: number;
-    content: string;
-  }
-};
 
 const TitleWrapper = styled(Box)({
   marginBottom: '8px',
@@ -34,46 +28,50 @@ const ListWrapper = styled(Box)({
   overflowY: 'auto',
 });
 
-const ProsList = () => {
-  const [prosList, setProsList] = useState<Pros>({
-    1: {
-      id: 1,
-      content: '',
-    }
-  });
+export type ListItem = {
+  id: number;
+  content: string;
+};
 
+type CommonListProps = {
+  title: string;
+  type: 'pros' | 'cons';
+  list: ListItem[];
+  onChangeList: (list: ListItem[]) => void;
+};
+
+const CommonList: FC<CommonListProps> = ({ title, type, list, onChangeList }) => {
   const onChange = useCallback((event: ContentEditableEvent, id: number) => {
-    const prosKeys = Object.keys(prosList);
-    const isLast = prosKeys.length === id;
+    const isLast = list[list.length - 1].id === id;
 
     if (!isLast && !event.target.value) {
-      const filteredList = removeLastProperty(prosList);
-      setProsList({
-        ...filteredList,
-        [id]: {
-          ...prosList[id],
-          content: event.target.value,
-        },
-      });
+      const filteredList = list.filter((item) => item.id !== id);
+      onChangeList(filteredList);
 
       return;
     }
 
-    setProsList({
-      ...prosList,
-      [id]: {
-        ...prosList[id],
-        content: event.target.value,
-      },
-      ...(isLast ? {
-        [id + 1]: {
-          id: id + 1,
-          content: '',
-        },
-      } : {}),
-    })
-  }, [prosList]);
+    const updatedList = list.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          content: event.target.value,
+        };
+      }
 
+      return item;
+    });
+
+    if (isLast) {
+      updatedList.push({
+        id: id + 1,
+        content: '',
+      });
+    }
+
+    onChangeList(updatedList);
+  }, [list, onChangeList]);
+  
   return (
     <Box
       display="flex"
@@ -82,8 +80,8 @@ const ProsList = () => {
       maxWidth={200}
     >
       <TitleWrapper>
-        <Title Icon={ThumbUp} type="pros">
-          Pros
+        <Title Icon={type === 'pros' ? ThumbUp : ThumbDown} type={type}>
+          {title}
         </Title>
       </TitleWrapper>
       <ListWrapper
@@ -93,10 +91,11 @@ const ProsList = () => {
         padding={1}
       >
         {
-          !isObjectEmpty(prosList) && Object.values(prosList).map(({ id, content }) =>(
+          list.map(({ id, content }, index) =>(
             <Input
               key={id}
               id={id}
+              orderNumber={index + 1}
               content={content}
               onChange={onChange}
             />
@@ -107,4 +106,4 @@ const ProsList = () => {
   );
 };
 
-export default ProsList;
+export default CommonList;
